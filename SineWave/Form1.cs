@@ -33,9 +33,10 @@ namespace SineWave
             Random rand = new Random(seed);
 
             List<Layer> layers = new List<Layer>();
-            layers.Add(new Layer(Activations.Sigmoid, 1, 2));
-            layers.Add(new Layer(Activations.Sigmoid, 2, 2));
-            layers.Add(new Layer(Activations.Sigmoid, 2, 1));
+            layers.Add(new Layer(Activations.Tanh, 1, 1));
+            layers.Add(new Layer(Activations.Tanh, 1, 5));
+            layers.Add(new Layer(Activations.Tanh, 5, 5));
+            layers.Add(new Layer(Activations.Tanh, 5, 1));
 
             net = new NeuralNet(layers.ToArray());
             net.Randomize(rand);
@@ -45,13 +46,31 @@ namespace SineWave
             for (int i = 0; i < ClientSize.Width; i++)
             {
                 inputs[i] = new double[] { (double)i / ClientSize.Width };
-                outputs[i] = new double[] { (1 + Math.Sin(i/(15*Math.PI)))/2 };
+                outputs[i] = new double[] { (Math.Sin(i/(15*Math.PI)))/2 };
+            }
+
+            for (int i = 0; i < ClientSize.Width; i++)
+            {
+                if(inputs[i][0] <= 0 || inputs[i][0] >= 1)
+                {
+                    ;
+                }
+                if (outputs[i][0] <= 0 || outputs[i][0] >= 1)
+                {
+                    ;
+                }
+            }
+
+            for (int i = 0; i < 100; i++)
+            {
+                net.Backprop(inputs, outputs, 0.9f);
             }
         }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            
+            label1.Text = net.MAE(inputs, outputs).ToString();
+
             int result = (int)(100 * (net.Compute(inputs[0])[0] - 0.5f));
             int nextResult = (int)(100 * (net.Compute(inputs[1])[0] - 0.5f));
 
@@ -61,18 +80,23 @@ namespace SineWave
             for (int i = 0; i < ClientSize.Width; i++)
             {
 
-                gfx.DrawLine(new Pen(Color.Black, 1), i, ClientSize.Height / 2 + desiredResult, i + 1, ClientSize.Height / 2 + nextDesiredResult);
+                gfx.DrawLine(new Pen(Color.Black, 1), (float)inputs[i][0] * ClientSize.Width, ClientSize.Height / 2 + desiredResult, i+1, ClientSize.Height / 2 + nextDesiredResult);
                 desiredResult = nextDesiredResult;
-                nextDesiredResult = (int)(100 * (outputs[i][0] - 0.5f));
+                nextDesiredResult = (int)(100d * outputs[i][0]);
                 
                 //backprop
                 gfx.DrawLine(new Pen(Color.Red, 5), i, ClientSize.Height / 2 + result, i + 1, ClientSize.Height / 2 + nextResult);
                 result = nextResult;
-                nextResult = (int)(100 * (net.Compute(inputs[i])[0] - 0.5f));
+                nextResult = (int)(100f * net.Compute(inputs[i])[0]);
             }
 
-            net.Backprop(inputs, outputs, 0.9);
+            net.Backprop(inputs, outputs, 0.9f);
             gfx.Clear(Color.White);
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
