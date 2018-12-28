@@ -32,13 +32,8 @@ namespace SineWave
             int seed = Guid.NewGuid().GetHashCode();
             Random rand = new Random(seed);
 
-            List<Layer> layers = new List<Layer>();
-            layers.Add(new Layer(Activations.Tanh, 1, 1));
-            layers.Add(new Layer(Activations.Tanh, 1, 5));
-            layers.Add(new Layer(Activations.Tanh, 5, 5));
-            layers.Add(new Layer(Activations.Tanh, 5, 1));
-
-            net = new NeuralNet(layers.ToArray());
+            // 1, 100, 1
+            var net = new NeuralNet(1, (100, Activations.Tanh));
             net.Randomize(rand);
 
             inputs = new double[ClientSize.Width][];
@@ -46,7 +41,7 @@ namespace SineWave
             for (int i = 0; i < ClientSize.Width; i++)
             {
                 inputs[i] = new double[] { (double)i / ClientSize.Width };
-                outputs[i] = new double[] { (Math.Sin(i/(15*Math.PI)))/2 };
+                outputs[i] = new double[] { (Math.Sin(((double)i / ClientSize.Width) * 2 * Math.PI))};
             }
 
             for (int i = 0; i < ClientSize.Width; i++)
@@ -61,10 +56,10 @@ namespace SineWave
                 }
             }
 
-            for (int i = 0; i < 100; i++)
-            {
-                net.Backprop(inputs, outputs, 0.9f);
-            }
+            //for (int i = 0; i < 1000; i++)
+            //{
+            //    net.Backprop(inputs, outputs, 0.001);
+            //}
         }
 
         private void timer1_Tick(object sender, EventArgs e)
@@ -77,20 +72,20 @@ namespace SineWave
             int desiredResult = (int)(100 * (outputs[0][0] - 0.5f));
             int nextDesiredResult = (int)(100 * (outputs[1][0] - 0.5f));
 
-            for (int i = 0; i < ClientSize.Width; i++)
-            {
+            //for (int i = 0; i < ClientSize.Width; i++)
+            //{
 
-                gfx.DrawLine(new Pen(Color.Black, 1), (float)inputs[i][0] * ClientSize.Width, ClientSize.Height / 2 + desiredResult, i+1, ClientSize.Height / 2 + nextDesiredResult);
-                desiredResult = nextDesiredResult;
-                nextDesiredResult = (int)(100d * outputs[i][0]);
+            //    gfx.DrawLine(new Pen(Color.Black, 1), (float)inputs[i][0] * ClientSize.Width, ClientSize.Height / 2 + desiredResult, i+1, ClientSize.Height / 2 + nextDesiredResult);
+            //    desiredResult = nextDesiredResult;
+            //    nextDesiredResult = (int)(100d * outputs[i][0]);
                 
-                //backprop
-                gfx.DrawLine(new Pen(Color.Red, 5), i, ClientSize.Height / 2 + result, i + 1, ClientSize.Height / 2 + nextResult);
-                result = nextResult;
-                nextResult = (int)(100f * net.Compute(inputs[i])[0]);
-            }
+            //    //backprop
+            //    gfx.DrawLine(new Pen(Color.Red, 5), i, ClientSize.Height / 2 + result, i + 1, ClientSize.Height / 2 + nextResult);
+            //    result = nextResult;
+            //    nextResult = (int)(100f * net.Compute(inputs[i])[0]);
+            //}
 
-            net.Backprop(inputs, outputs, 0.9f);
+            net.Backprop(inputs, outputs, 0.001);
             gfx.Clear(Color.White);
         }
 
