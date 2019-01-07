@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.28010.2046
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SineWave", "SineWave\SineWave.csproj", "{EEF949DA-70B0-436D-A53C-E931D810FF0A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeuralNetwork", "..\..\GitHub\Backprop\NeuralNetwork\NeuralNetwork\NeuralNetwork.csproj", "{056E33F7-FC29-4CBF-8990-C209A9FE771D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeuralNetwork", "..\Backprop\NeuralNetwork\NeuralNetwork\NeuralNetwork.csproj", "{777E0375-F9C1-490A-A5DE-97CC8AE11314}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,10 @@ Global
 		{EEF949DA-70B0-436D-A53C-E931D810FF0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EEF949DA-70B0-436D-A53C-E931D810FF0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EEF949DA-70B0-436D-A53C-E931D810FF0A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{056E33F7-FC29-4CBF-8990-C209A9FE771D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{056E33F7-FC29-4CBF-8990-C209A9FE771D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{056E33F7-FC29-4CBF-8990-C209A9FE771D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{056E33F7-FC29-4CBF-8990-C209A9FE771D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{777E0375-F9C1-490A-A5DE-97CC8AE11314}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{777E0375-F9C1-490A-A5DE-97CC8AE11314}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{777E0375-F9C1-490A-A5DE-97CC8AE11314}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{777E0375-F9C1-490A-A5DE-97CC8AE11314}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -13,85 +13,67 @@ namespace SineWave
 {
     public partial class Form1 : Form
     {
+        Bitmap map;
         Graphics gfx;
 
         public Form1()
         {
             InitializeComponent();
-
         }
 
         NeuralNet net;
         double[][] inputs;
         double[][] outputs;
 
+        double scale = 1;
+
         private void Form1_Load(object sender, EventArgs e)
         {
-            gfx = CreateGraphics();
+
+            map = new Bitmap(ClientSize.Width, ClientSize.Height);
+            gfx = Graphics.FromImage(map);
+
+            scale = ClientSize.Width / (Math.PI * 2);
 
             int seed = Guid.NewGuid().GetHashCode();
             Random rand = new Random(seed);
 
             // 1, 100, 1
-            var net = new NeuralNet(1, (100, Activations.Tanh));
+            net = new NeuralNet(1, (100, Activations.Tanh));
             net.Randomize(rand);
 
             inputs = new double[ClientSize.Width][];
             outputs = new double[ClientSize.Width][];
             for (int i = 0; i < ClientSize.Width; i++)
             {
-                inputs[i] = new double[] { (double)i / ClientSize.Width };
-                outputs[i] = new double[] { (Math.Sin(((double)i / ClientSize.Width) * 2 * Math.PI))};
+                double x = (double)i / ClientSize.Width * 2 * Math.PI;
+                double y = Math.Sin(x);
+
+                inputs[i] = new double[] { x };
+                outputs[i] = new double[] { y };
             }
 
-            for (int i = 0; i < ClientSize.Width; i++)
-            {
-                if(inputs[i][0] <= 0 || inputs[i][0] >= 1)
-                {
-                    ;
-                }
-                if (outputs[i][0] <= 0 || outputs[i][0] >= 1)
-                {
-                    ;
-                }
-            }
-
-            //for (int i = 0; i < 1000; i++)
-            //{
-            //    net.Backprop(inputs, outputs, 0.001);
-            //}
+            backgroundWorker1.RunWorkerAsync();
         }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
+            for (int i = 0; i < 100; i++)
+            {
+                net.Backprop(inputs, outputs, 0.0005f);
+            }
             label1.Text = net.MAE(inputs, outputs).ToString();
 
-            int result = (int)(100 * (net.Compute(inputs[0])[0] - 0.5f));
-            int nextResult = (int)(100 * (net.Compute(inputs[1])[0] - 0.5f));
-
-            int desiredResult = (int)(100 * (outputs[0][0] - 0.5f));
-            int nextDesiredResult = (int)(100 * (outputs[1][0] - 0.5f));
-
-            //for (int i = 0; i < ClientSize.Width; i++)
-            //{
-
-            //    gfx.DrawLine(new Pen(Color.Black, 1), (float)inputs[i][0] * ClientSize.Width, ClientSize.Height / 2 + desiredResult, i+1, ClientSize.Height / 2 + nextDesiredResult);
-            //    desiredResult = nextDesiredResult;
-            //    nextDesiredResult = (int)(100d * outputs[i][0]);
-                
-            //    //backprop
-            //    gfx.DrawLine(new Pen(Color.Red, 5), i, ClientSize.Height / 2 + result, i + 1, ClientSize.Height / 2 + nextResult);
-            //    result = nextResult;
-            //    nextResult = (int)(100f * net.Compute(inputs[i])[0]);
-            //}
-
-            net.Backprop(inputs, outputs, 0.001);
             gfx.Clear(Color.White);
-        }
+            for (int i = 0; i < inputs.Length; i++)
+            {
+                //data
+                gfx.FillRectangle(Brushes.Black, (int)(inputs[i][0] * scale), (int)(outputs[i][0] * scale + ClientSize.Height/2), 2, 2);
 
-        private void label1_Click(object sender, EventArgs e)
-        {
-
+                //network
+                gfx.FillRectangle(Brushes.Red, (int)(inputs[i][0] * scale), (int)(net.Compute(inputs[i])[0] * scale + ClientSize.Height / 2), 2, 2);
+            }
+            bitBox.Image = map;
         }
     }
 }

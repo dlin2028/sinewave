@@ -80,8 +80,8 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\GitHub\Backprop\NeuralNetwork\NeuralNetwork\NeuralNetwork.csproj">
-      <Project>{056E33F7-FC29-4CBF-8990-C209A9FE771D}</Project>
+    <ProjectReference Include="..\..\Backprop\NeuralNetwork\NeuralNetwork\NeuralNetwork.csproj">
+      <Project>{777e0375-f9c1-490a-a5de-97cc8ae11314}</Project>
       <Name>NeuralNetwork</Name>
     </ProjectReference>
   </ItemGroup>
