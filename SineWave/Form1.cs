@@ -58,12 +58,10 @@ namespace SineWave
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            for (int i = 0; i < 100; i++)
-            {
-                net.Backprop(inputs, outputs, 0.0005f);
-            }
-            label1.Text = net.MAE(inputs, outputs).ToString();
+            var currentNet = net.Clone();
+            label1.Text = currentNet.MAE(inputs, outputs).ToString();
 
+            
             gfx.Clear(Color.White);
             for (int i = 0; i < inputs.Length; i++)
             {
@@ -71,9 +69,17 @@ namespace SineWave
                 gfx.FillRectangle(Brushes.Black, (int)(inputs[i][0] * scale), (int)(outputs[i][0] * scale + ClientSize.Height/2), 2, 2);
 
                 //network
-                gfx.FillRectangle(Brushes.Red, (int)(inputs[i][0] * scale), (int)(net.Compute(inputs[i])[0] * scale + ClientSize.Height / 2), 2, 2);
+                gfx.FillRectangle(Brushes.Red, (int)(inputs[i][0] * scale), (int)(currentNet.Compute(inputs[i])[0] * scale + ClientSize.Height / 2), 2, 2);
             }
             bitBox.Image = map;
+        }
+
+        private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
+        {
+            while(true)
+            {
+                net.Backprop(inputs, outputs, 0.0005f);
+            }
         }
     }
 }
