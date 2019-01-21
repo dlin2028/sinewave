@@ -33,6 +33,9 @@ namespace SineWave
         double range = Math.PI * 3;
         double scale;
 
+        double[][] trainingInputs;
+        double[][] trainingOutputs;
+
         private void Form1_Load(object sender, EventArgs e)
         {
             map = new Bitmap(ClientSize.Width, ClientSize.Height);
@@ -48,6 +51,8 @@ namespace SineWave
             net.Randomize(rand);
 
             (inputs, outputs) = GenerateSine(size, range);
+
+            (trainingInputs, trainingOutputs) = removeRandomStuff(inputs, outputs, 0.7f);
 
 
             backgroundWorker1.RunWorkerAsync();
@@ -77,27 +82,41 @@ namespace SineWave
                 currentNet = net.Clone();
             }
             label1.Text = currentNet.MAE(inputs, outputs).ToString();
-
             
-            gfx.Clear(Color.White);
+            gfx.Clear(Color.Black);
             for (int i = 0; i < inputs.Length; i++)
             {
                 //data
-                gfx.FillRectangle(Brushes.Black, (int)(inputs[i][0] * scale), (int)(outputs[i][0] * scale + ClientSize.Height/2), 2, 2);
+                gfx.FillRectangle(Brushes.Wheat, (int)(inputs[i][0] * scale), (int)(outputs[i][0] * scale + ClientSize.Height/2), 2, 2);
 
                 //network
-                gfx.FillRectangle(Brushes.Red, (int)(inputs[i][0] * scale), (int)(currentNet.Compute(inputs[i])[0] * scale + ClientSize.Height / 2), 2, 2);
+                gfx.FillRectangle(trainingInputs.Contains(inputs[i]) ?  Brushes.Green : Brushes.Red, (int)(inputs[i][0] * scale), (int)(currentNet.Compute(inputs[i])[0] * scale + ClientSize.Height / 2), 2, 2);
             }
             bitBox.Image = map;
         }
 
+        public (double[][], double[][]) removeRandomStuff(double[][] arr, double[][] arr2, float rate)
+        {
+            List<double[]> trainingInputs = new List<double[]>(arr);
+            List<double[]> trainingOutputs = new List<double[]>(arr2);
+            Random rng = new Random();
+
+            for (int i = 0; i < trainingInputs.Count * rate; i++)
+            {
+                int remove = rng.Next(trainingInputs.Count);
+                trainingInputs.RemoveAt(remove);
+                trainingOutputs.RemoveAt(remove);
+            }
+            return (trainingInputs.ToArray(), trainingOutputs.ToArray());
+        }
+
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
-            while(true)
+            while (true)
             {
                 lock (lockObject)
                 {
-                    net.Backprop(inputs, outputs, 0.0125, 0.2, 1);
+                    net.Backprop(trainingInputs, trainingOutputs, 0.0125, 0.2, 1);
                 }
             }
         }
